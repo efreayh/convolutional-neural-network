@@ -122,6 +122,18 @@ Matrix Matrix::operator*(const Matrix& other) const {
     return result;
 }
 
+Matrix Matrix::element_wise_multiply(const Matrix& other) const {
+    if (rows_ != other.rows_ || columns_ != other.columns_) {
+        throw std::invalid_argument("Matrix dimensions do not match");
+    }
+
+    Matrix result(rows_, columns_);
+    for (int i = 0; i < rows_ * columns_; ++i) {
+        result.data_[i] = data_[i] * other.data_[i];
+    }
+    return result;
+}
+
 Matrix Matrix::scalar_multiply(const double multiplier) const {
     Matrix result(rows_, columns_);
     for (int i = 0; i < rows_ * columns_; ++i) {
