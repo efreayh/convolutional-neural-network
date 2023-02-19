@@ -13,8 +13,8 @@ public:
     Matrix(std::vector<std::vector<double>> const &input_matrix);
 
     /* Accessors */
-    int get_rows() const;
-    int get_columns() const;
+    int get_num_rows() const;
+    int get_num_columns() const;
     int get_padding() const;
     double& operator()(const int row, const int column);
     const double& operator()(const int row, const int column) const;
@@ -25,6 +25,9 @@ public:
     Matrix operator*(const Matrix& other) const;
     Matrix scalar_multiply(const double multiplier) const;
     Matrix transpose() const;
+
+    /* Other operations */
+    void randomize();
     bool operator==(const Matrix& other) const;
     bool operator!=(const Matrix& other) const;
 

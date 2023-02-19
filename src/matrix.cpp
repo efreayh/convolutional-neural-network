@@ -1,6 +1,6 @@
 #include <iostream>
-#include <iomanip>
 #include <stdexcept>
+#include <random>
 #include "matrix.hpp"
 
 /******************************************************
@@ -48,11 +48,11 @@ Matrix::Matrix(std::vector<std::vector<double>> const &input_matrix): Matrix(inp
  * Accessors
  *****************************************************/
 
-int Matrix::get_rows() const {
+int Matrix::get_num_rows() const {
     return rows_;
 }
 
-int Matrix::get_columns() const {
+int Matrix::get_num_columns() const {
     return columns_;
 }
 
@@ -140,6 +140,19 @@ Matrix Matrix::transpose() const {
     return result;
 }
 
+/******************************************************
+ * Other operations
+ *****************************************************/
+
+void Matrix::randomize() {
+    std::default_random_engine generator;
+    std::normal_distribution<double> dist(0, 1);
+
+    for (int i = 0; i < rows_ * columns_; ++i) {
+        data_[i] = dist(generator);
+    }
+}
+
 bool Matrix::operator==(const Matrix& other) const {
     if (rows_ != other.rows_ || columns_ != other.columns_) {
         return false;
@@ -173,15 +186,10 @@ bool Matrix::operator!=(const Matrix& other) const {
  *****************************************************/
 
 void Matrix::print() const {
-    int print_width = 5;
-
     for (int i = 0; i < rows_ * columns_; ++i) {
         std::cout << data_[i] << " ";
         if ((i + 1) % columns_ == 0) {
             std::cout << std::endl;
-        }
-        else {
-            std::cout << std:: setw(print_width);
         }
     }
 }
