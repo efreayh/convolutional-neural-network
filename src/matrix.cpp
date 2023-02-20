@@ -92,6 +92,17 @@ Matrix Matrix::operator+(const Matrix& other) const {
     return result;
 }
 
+Matrix& Matrix::operator+=(const Matrix& other) {
+    if (rows_ != other.rows_ || columns_ != other.columns_) {
+        throw std::invalid_argument("Matrix dimensions do not match");
+    }
+
+    for (int i = 0; i < rows_ * columns_; ++i) {
+        data_[i] += other.data_[i];
+    }
+    return *this;
+}
+
 Matrix Matrix::operator-(const Matrix& other) const {
     if (rows_ != other.rows_ || columns_ != other.columns_) {
         throw std::invalid_argument("Matrix dimensions do not match");
@@ -102,6 +113,17 @@ Matrix Matrix::operator-(const Matrix& other) const {
         result.data_[i] = data_[i] - other.data_[i];
     }
     return result;
+}
+
+Matrix& Matrix::operator-=(const Matrix& other) {
+    if (rows_ != other.rows_ || columns_ != other.columns_) {
+        throw std::invalid_argument("Matrix dimensions do not match");
+    }
+
+    for (int i = 0; i < rows_ * columns_; ++i) {
+        data_[i] -= other.data_[i];
+    }
+    return *this;
 }
 
 Matrix Matrix::operator*(const Matrix& other) const {
