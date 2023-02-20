@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <random>
+#include <functional>
 #include "matrix.hpp"
 
 /******************************************************
@@ -177,6 +178,14 @@ Matrix Matrix::transpose() const {
 /******************************************************
  * Other operations
  *****************************************************/
+
+Matrix Matrix::apply_function(std::function<double(double)>& function) const {
+    Matrix result(rows_, columns_);
+    for (int i = 0; i < rows_ * columns_; ++i) {
+        result.data_[i] = function(data_[i]);
+    }
+    return result;
+}
 
 void Matrix::randomize() {
     std::default_random_engine generator;

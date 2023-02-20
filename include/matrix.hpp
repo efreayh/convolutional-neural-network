@@ -2,6 +2,7 @@
 #define MATRIX_HPP
 
 #include <vector>
+#include <functional>
 
 class Matrix {
 public:
@@ -30,6 +31,7 @@ public:
     Matrix transpose() const;
 
     /* Other operations */
+    Matrix apply_function(std::function<double(double)>& function) const;
     void randomize();
     bool operator==(const Matrix& other) const;
     bool operator!=(const Matrix& other) const;
