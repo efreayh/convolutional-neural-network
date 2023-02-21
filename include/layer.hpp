@@ -17,7 +17,7 @@ public:
 
     /* Setters */
     void set_activation_function(std::function<double(double)> function);
-    void set_activation_function_derivative(std::function<double(double)> derivative);
+    void set_activation_derivative(std::function<double(double)> derivative);
 
     /* Layer functionality */
     virtual Matrix forward(const Matrix& input) = 0;
@@ -28,9 +28,10 @@ protected:
     int output_size_;
     Matrix weights_;
     Matrix biases_;
-    Matrix forward_input_;
+    Matrix input_;
+    Matrix output_;
     std::function<double(double)> activation_function_;
-    std::function<double(double)> activation_function_derivative_;
+    std::function<double(double)> activation_derivative_;
 };
 
 #endif
