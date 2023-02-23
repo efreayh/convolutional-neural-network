@@ -1,3 +1,6 @@
+#include <iostream>
+#include <stdexcept>
+#include <random>
 #include "matrix.hpp"
 
 /******************************************************

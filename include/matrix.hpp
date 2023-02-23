@@ -3,9 +3,6 @@
 
 #include <vector>
 #include <functional>
-#include <iostream>
-#include <stdexcept>
-#include <random>
 
 class Matrix {
 public:
