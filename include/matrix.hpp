@@ -3,6 +3,9 @@
 
 #include <vector>
 #include <functional>
+#include <iostream>
+#include <stdexcept>
+#include <random>
 
 class Matrix {
 public:
@@ -31,7 +34,6 @@ public:
     Matrix transpose() const;
 
     /* Other operations */
-    Matrix apply_function(const std::function<double(double)>& function) const;
     void randomize();
     bool operator==(const Matrix& other) const;
     bool operator!=(const Matrix& other) const;

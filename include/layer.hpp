@@ -1,6 +1,7 @@
 #ifndef LAYER_HPP
 #define LAYER_HPP
 
+#include <string>
 #include <functional>
 #include "matrix.hpp"
 
@@ -8,7 +9,7 @@ class Layer {
 public:
 
     /* Constructors */
-    Layer(int input_size, int output_size, std::function<double(double)> function, std::function<double(double)> derivative);
+    Layer(int input_size, int output_size, std::string activation_function_name);
     Layer(int input_size, int output_size);
 
     /* Getters */
@@ -16,8 +17,8 @@ public:
     int get_output_size() const;
 
     /* Setters */
-    void set_activation_function(std::function<double(double)> function);
-    void set_activation_derivative(std::function<double(double)> derivative);
+    void set_activation_function(std::function<Matrix(const Matrix&)> function);
+    void set_activation_derivative(std::function<Matrix(const Matrix&)> derivative);
 
     /* Layer functionality */
     virtual Matrix forward(const Matrix& input) = 0;
@@ -30,8 +31,8 @@ protected:
     Matrix biases_;
     Matrix input_;
     Matrix output_;
-    std::function<double(double)> activation_function_;
-    std::function<double(double)> activation_derivative_;
+    std::function<Matrix(const Matrix&)> activation_function_;
+    std::function<Matrix(const Matrix&)> activation_derivative_;
 };
 
 #endif

@@ -4,8 +4,8 @@
  * Constructors
  *****************************************************/
 
-DenseLayer::DenseLayer(int input_size, int output_size, std::function<double(double)> function, std::function<double(double)> derivative): 
-    Layer(input_size, output_size, function, derivative) {}
+DenseLayer::DenseLayer(int input_size, int output_size, std::string activation_function_name): 
+    Layer(input_size, output_size, activation_function_name) {}
 
 DenseLayer::DenseLayer(int input_size, int output_size): 
     Layer(input_size, output_size) {}
@@ -17,12 +17,12 @@ DenseLayer::DenseLayer(int input_size, int output_size):
 Matrix DenseLayer::forward(const Matrix& input) {
     input_ = input;
     output_ = weights_ * input_ + biases_;
-    return output_.apply_function(activation_function_);
+    return activation_function_(output_);
 }
 
 Matrix DenseLayer::backward(const Matrix& output_gradient) {
     double learning_rate = 0.001;
-    Matrix activation_gradient = output_.apply_function(activation_derivative_);
+    Matrix activation_gradient = activation_derivative_(output_);
     Matrix input_gradient = weights_.transpose() * output_gradient.element_wise_multiply(activation_gradient);
     Matrix weights_gradient = output_gradient.element_wise_multiply(activation_gradient) * input_.transpose();
     Matrix biases_gradient = output_gradient.element_wise_multiply(activation_gradient);
