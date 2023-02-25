@@ -33,6 +33,9 @@ protected:
     Matrix output_;
     std::function<Matrix(const Matrix&)> activation_function_;
     std::function<Matrix(const Matrix&)> activation_derivative_;
+
+    /* Helper functions */
+    bool compare_ignore_case(const std::string& s1, const std::string& s2);
 };
 
 #endif
