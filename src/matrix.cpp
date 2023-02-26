@@ -44,6 +44,13 @@ Matrix::Matrix(std::vector<std::vector<double>> const &input_matrix, int padding
 
 Matrix::Matrix(std::vector<std::vector<double>> const &input_matrix): Matrix(input_matrix, 0) {}
 
+Matrix::Matrix(const Matrix& other) {
+    rows_ = other.rows_;
+    columns_ = other.columns_;
+    padding_ = other.padding_;
+    data_ = other.data_;
+}
+
 /******************************************************
  * Accessors
  *****************************************************/
@@ -74,6 +81,23 @@ const double& Matrix::operator()(const int row, const int column) const {
     }
     
     return data_[row * columns_ + column];
+}
+
+/******************************************************
+ * Assignment operator
+ *****************************************************/
+
+Matrix& Matrix::operator=(const Matrix& other) {
+    if (&other == this) {
+        return *this;
+    }
+
+    rows_ = other.rows_;
+    columns_ = other.columns_;
+    padding_ = other.padding_;
+    data_ = other.data_;
+
+    return *this;
 }
 
 /******************************************************

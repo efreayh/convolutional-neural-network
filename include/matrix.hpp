@@ -2,7 +2,6 @@
 #define MATRIX_HPP
 
 #include <vector>
-#include <functional>
 
 class Matrix {
 public:
@@ -12,6 +11,7 @@ public:
     Matrix(int rows, int columns);
     Matrix(std::vector<std::vector<double>> const &input_matrix, int padding);
     Matrix(std::vector<std::vector<double>> const &input_matrix);
+    Matrix(const Matrix& other);
 
     /* Accessors */
     int get_num_rows() const;
@@ -19,6 +19,9 @@ public:
     int get_padding() const;
     double& operator()(const int row, const int column);
     const double& operator()(const int row, const int column) const;
+
+    /* Assignment operator */
+    Matrix& operator=(const Matrix& other);
 
     /* Matrix operations */
     Matrix operator+(const Matrix& other) const;
