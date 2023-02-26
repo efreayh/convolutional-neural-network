@@ -9,11 +9,11 @@
 
 Matrix::Matrix(int rows, int columns, int padding) {
     if (rows <= 0 || columns <= 0) {
-        throw std::invalid_argument("Matrix size cannot be 0");
+        throw std::invalid_argument("Matrix constructor: size cannot be 0");
     }
 
     if (padding < 0) {
-        throw std::invalid_argument("Padding cannot be less than 0");
+        throw std::invalid_argument("Matrix constructor: padding cannot be less than 0");
     }
 
     rows_ = rows;
@@ -26,11 +26,11 @@ Matrix::Matrix(int rows, int columns): Matrix(rows, columns, 0) {}
 
 Matrix::Matrix(std::vector<std::vector<double>> const &input_matrix, int padding) {
     if (input_matrix.empty() || input_matrix[0].empty()) {
-        throw std::invalid_argument("Input matrix cannot be empty");
+        throw std::invalid_argument("Matrix constructor: input matrix cannot be empty");
     }
 
     if (padding < 0) {
-        throw std::invalid_argument("Padding cannot be less than 0");
+        throw std::invalid_argument("Matrix constructor: padding cannot be less than 0");
     }
 
     rows_ = input_matrix.size();
@@ -69,7 +69,7 @@ int Matrix::get_padding() const {
 
 double& Matrix::operator()(const int row, const int column) {
     if (row < 0 || row >= rows_ || column < 0 || column >= columns_) {
-        throw std::invalid_argument("Matrix coordinates out of bounds");
+        throw std::invalid_argument("Matrix accessor: coordinates out of bounds");
     }
 
     return data_[row * columns_ + column];
@@ -77,7 +77,7 @@ double& Matrix::operator()(const int row, const int column) {
 
 const double& Matrix::operator()(const int row, const int column) const {
     if (row < 0 || row >= rows_ || column < 0 || column >= columns_) {
-        throw std::invalid_argument("Matrix coordinates out of bounds");
+        throw std::invalid_argument("Matrix accessor: coordinates out of bounds");
     }
     
     return data_[row * columns_ + column];
@@ -106,7 +106,7 @@ Matrix& Matrix::operator=(const Matrix& other) {
 
 Matrix Matrix::operator+(const Matrix& other) const {
     if (rows_ != other.rows_ || columns_ != other.columns_) {
-        throw std::invalid_argument("Matrix dimensions do not match");
+        throw std::invalid_argument("Matrix addition: dimensions do not match");
     }
 
     Matrix result(rows_, columns_);
@@ -118,7 +118,7 @@ Matrix Matrix::operator+(const Matrix& other) const {
 
 Matrix& Matrix::operator+=(const Matrix& other) {
     if (rows_ != other.rows_ || columns_ != other.columns_) {
-        throw std::invalid_argument("Matrix dimensions do not match");
+        throw std::invalid_argument("Matrix addition assignment: dimensions do not match");
     }
 
     for (int i = 0; i < rows_ * columns_; ++i) {
@@ -129,7 +129,7 @@ Matrix& Matrix::operator+=(const Matrix& other) {
 
 Matrix Matrix::operator-(const Matrix& other) const {
     if (rows_ != other.rows_ || columns_ != other.columns_) {
-        throw std::invalid_argument("Matrix dimensions do not match");
+        throw std::invalid_argument("Matrix subtraction: dimensions do not match");
     }
 
     Matrix result(rows_, columns_);
@@ -141,7 +141,7 @@ Matrix Matrix::operator-(const Matrix& other) const {
 
 Matrix& Matrix::operator-=(const Matrix& other) {
     if (rows_ != other.rows_ || columns_ != other.columns_) {
-        throw std::invalid_argument("Matrix dimensions do not match");
+        throw std::invalid_argument("Matrix subtraction assignment: dimensions do not match");
     }
 
     for (int i = 0; i < rows_ * columns_; ++i) {
@@ -152,7 +152,7 @@ Matrix& Matrix::operator-=(const Matrix& other) {
 
 Matrix Matrix::operator*(const Matrix& other) const {
     if (columns_ != other.rows_) {
-        throw std::invalid_argument("Matrix dimensions are incompatible");
+        throw std::invalid_argument("Matrix multiplication: dimensions are incompatible");
     }
 
     Matrix result(rows_, other.columns_);
@@ -170,7 +170,7 @@ Matrix Matrix::operator*(const Matrix& other) const {
 
 Matrix Matrix::element_wise_multiply(const Matrix& other) const {
     if (rows_ != other.rows_ || columns_ != other.columns_) {
-        throw std::invalid_argument("Matrix dimensions do not match");
+        throw std::invalid_argument("Matrix element wise multiply: dimensions do not match");
     }
 
     Matrix result(rows_, columns_);
