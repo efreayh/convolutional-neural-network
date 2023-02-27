@@ -35,23 +35,31 @@ Matrix ActivationFunction::apply_derivative(const Matrix& input_matrix) const {
 
 void ActivationFunction::set_sigmoid() {
     activation_function_ = [](const Matrix& input_matrix) -> Matrix {
-        Matrix result(input_matrix.get_num_rows(), 1);
+        if (input_matrix.get_num_rows() != 1) {
+            throw std::invalid_argument("sigmoid: invalid matrix dimensions");
+        }
 
-        for (int i = 0; i < input_matrix.get_num_rows(); ++i) {
-            double sigmoid = 1 / (1 + exp(-input_matrix(i, 0)));
-            result(i, 0) = sigmoid;
+        Matrix result(1, input_matrix.get_num_columns());
+
+        for (int i = 0; i < input_matrix.get_num_columns(); ++i) {
+            double sigmoid = 1 / (1 + exp(-input_matrix(0, i)));
+            result(0, i) = sigmoid;
         }
 
         return result;
     };
 
     activation_derivative_ = [](const Matrix& input_matrix) -> Matrix {
-        Matrix result(input_matrix.get_num_rows(), 1);
+        if (input_matrix.get_num_rows() != 1) {
+            throw std::invalid_argument("sigmoid: invalid matrix dimensions");
+        }
 
-        for (int i = 0; i < input_matrix.get_num_rows(); ++i) {
-            double sigmoid = 1 / (1 + exp(-input_matrix(i, 0)));
+        Matrix result(1, input_matrix.get_num_columns());
+
+        for (int i = 0; i < input_matrix.get_num_columns(); ++i) {
+            double sigmoid = 1 / (1 + exp(-input_matrix(0, i)));
             double sigmoid_derivative = sigmoid * (1 - sigmoid);
-            result(i, 0) = sigmoid_derivative;
+            result(0, i) = sigmoid_derivative;
         }
 
         return result;

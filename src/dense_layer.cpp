@@ -4,11 +4,10 @@
  * Constructors
  *****************************************************/
 
-DenseLayer::DenseLayer(int input_size, int output_size, std::string activation_function_name): 
-    Layer(input_size, output_size, activation_function_name) {}
-
-DenseLayer::DenseLayer(int input_size, int output_size): 
-    Layer(input_size, output_size) {}
+DenseLayer::DenseLayer(int input_size, int output_size, std::string activation_function_name, double learning_rate):
+    Layer(input_size, output_size),
+    function_(activation_function_name),
+    learning_rate_(learning_rate) {}
 
 /******************************************************
  * Layer functionality
@@ -16,21 +15,18 @@ DenseLayer::DenseLayer(int input_size, int output_size):
 
 Matrix DenseLayer::forward(const Matrix& input) {
     input_ = input;
-    output_ = weights_ * input_ + biases_;
-    return activation_function_(output_);
+    z_ = input * weights_ + biases_;
+    return function_.apply_function(z_);
 }
 
-Matrix DenseLayer::backward(const Matrix& output_gradient) {
-    double learning_rate = 0.001;
-    Matrix activation_gradient = activation_derivative_(output_);
-    Matrix input_gradient = weights_.transpose() * output_gradient.element_wise_multiply(activation_gradient);
-    Matrix weights_gradient = output_gradient.element_wise_multiply(activation_gradient) * input_.transpose();
-    Matrix biases_gradient = output_gradient.element_wise_multiply(activation_gradient);
-    weights_ -= weights_gradient.scalar_multiply(learning_rate);
-    biases_ -= biases_gradient.scalar_multiply(learning_rate);
+Matrix DenseLayer::backward(const Matrix& output) {
+    Matrix delta = output.element_wise_multiply(function_.apply_derivative(z_));
+    Matrix weights_gradient = input_.transpose() * delta;
+    Matrix biases_gradient = delta;
+    Matrix input_gradient = delta * weights_.transpose();
+
+    weights_ -= weights_gradient.scalar_multiply(learning_rate_);
+    biases_ -= biases_gradient.scalar_multiply(learning_rate_);
+
     return input_gradient;
-}
-
-Matrix DenseLayer::get_weights() const {
-    return weights_;
 }

@@ -23,7 +23,7 @@ protected:
     Matrix weights_;
     Matrix biases_;
     Matrix input_;
-    Matrix output_;
+    Matrix z_;
 };
 
 #endif

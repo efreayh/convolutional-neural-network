@@ -10,7 +10,7 @@ Layer::Layer(int input_size, int output_size):
     weights_(input_size, output_size), 
     biases_(1, output_size),
     input_(1, input_size),
-    output_(1, output_size) {
+    z_(1, output_size) {
     
     weights_.randomize();
 }
