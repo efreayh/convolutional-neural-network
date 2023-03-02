@@ -22,9 +22,6 @@ private:
 
     /* Activation function type setters */
     void set_sigmoid();
-
-    /* Helper functions */
-    bool compare_ignore_case(const std::string& s1, const std::string& s2);
 };
 
 #endif
