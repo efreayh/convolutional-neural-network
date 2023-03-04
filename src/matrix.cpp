@@ -2,52 +2,38 @@
 #include <stdexcept>
 #include <random>
 #include "matrix.hpp"
+#include "utility.hpp"
 
 /******************************************************
  * Constructors
  *****************************************************/
 
-Matrix::Matrix(int rows, int columns, int padding) {
+Matrix::Matrix(int rows, int columns) {
     if (rows <= 0 || columns <= 0) {
-        throw std::invalid_argument("Matrix constructor: size cannot be 0");
-    }
-
-    if (padding < 0) {
-        throw std::invalid_argument("Matrix constructor: padding cannot be less than 0");
+        throw std::invalid_argument("Matrix constructor: dimensions must be greater than 0");
     }
 
     rows_ = rows;
     columns_ = columns;
-    padding_ = padding;
     data_.resize(rows_ * columns_, 0.0);
 }
 
-Matrix::Matrix(int rows, int columns): Matrix(rows, columns, 0) {}
-
-Matrix::Matrix(std::vector<std::vector<double>> const &input_matrix, int padding) {
+Matrix::Matrix(const std::vector<std::vector<double>>& input_matrix) {
     if (input_matrix.empty() || input_matrix[0].empty()) {
         throw std::invalid_argument("Matrix constructor: input matrix cannot be empty");
     }
 
-    if (padding < 0) {
-        throw std::invalid_argument("Matrix constructor: padding cannot be less than 0");
-    }
-
     rows_ = input_matrix.size();
     columns_ = input_matrix[0].size();
-    padding_ = padding;
     data_.reserve(rows_ * columns_);
     for (int i = 0; i < rows_; ++i) {
         data_.insert(data_.end(), input_matrix[i].begin(), input_matrix[i].end());
     }
 }
 
-Matrix::Matrix(std::vector<std::vector<double>> const &input_matrix): Matrix(input_matrix, 0) {}
-
 Matrix::Matrix(const Matrix& other) {
     rows_ = other.rows_;
     columns_ = other.columns_;
-    padding_ = other.padding_;
     data_ = other.data_;
 }
 
@@ -61,10 +47,6 @@ int Matrix::get_num_rows() const {
 
 int Matrix::get_num_columns() const {
     return columns_;
-}
-
-int Matrix::get_padding() const {
-    return padding_;
 }
 
 double& Matrix::operator()(const int row, const int column) {
@@ -81,23 +63,6 @@ const double& Matrix::operator()(const int row, const int column) const {
     }
     
     return data_[row * columns_ + column];
-}
-
-/******************************************************
- * Assignment operator
- *****************************************************/
-
-Matrix& Matrix::operator=(const Matrix& other) {
-    if (&other == this) {
-        return *this;
-    }
-
-    rows_ = other.rows_;
-    columns_ = other.columns_;
-    padding_ = other.padding_;
-    data_ = other.data_;
-
-    return *this;
 }
 
 /******************************************************
@@ -199,8 +164,43 @@ Matrix Matrix::transpose() const {
 }
 
 /******************************************************
+ * Neural network operations
+ *****************************************************/
+
+Matrix Matrix::convolve(const Matrix& filter, int stride, std::string padding_type) const {
+    if (utility::compare_ignore_case(padding_type, "full")) {
+        throw std::logic_error("Matrix convolve: unimplemented");
+    }
+    else if (utility::compare_ignore_case(padding_type, "same")) {
+        throw std::logic_error("Matrix convolve: unimplemented");
+    }
+    else if (utility::compare_ignore_case(padding_type, "valid")) {
+        throw std::logic_error("Matrix convolve: unimplemented");
+    }
+    else {
+        throw std::invalid_argument("Matrix convolve: invalid padding_type");
+    }
+}
+
+Matrix Matrix::max_pool(int window_size, int stride) const {
+    throw std::logic_error("Matrix max_pool: unimplemented");
+}
+
+/******************************************************
  * Other operations
  *****************************************************/
+
+Matrix& Matrix::operator=(const Matrix& other) {
+    if (&other == this) {
+        return *this;
+    }
+
+    rows_ = other.rows_;
+    columns_ = other.columns_;
+    data_ = other.data_;
+
+    return *this;
+}
 
 void Matrix::randomize() {
     std::default_random_engine generator;
@@ -250,4 +250,8 @@ void Matrix::print() const {
             std::cout << std::endl;
         }
     }
+}
+
+void Matrix::print_dims() const {
+    std::cout << "Rows: " << rows_ << " Cols: " << columns_ << std::endl;
 }

@@ -2,26 +2,21 @@
 #define MATRIX_HPP
 
 #include <vector>
+#include <string>
 
 class Matrix {
 public:
 
     /* Constructors */
-    Matrix(int rows, int columns, int padding);
     Matrix(int rows, int columns);
-    Matrix(std::vector<std::vector<double>> const &input_matrix, int padding);
-    Matrix(std::vector<std::vector<double>> const &input_matrix);
+    Matrix(const std::vector<std::vector<double>>& input_matrix);
     Matrix(const Matrix& other);
 
     /* Accessors */
     int get_num_rows() const;
     int get_num_columns() const;
-    int get_padding() const;
     double& operator()(const int row, const int column);
     const double& operator()(const int row, const int column) const;
-
-    /* Assignment operator */
-    Matrix& operator=(const Matrix& other);
 
     /* Matrix operations */
     Matrix operator+(const Matrix& other) const;
@@ -33,18 +28,23 @@ public:
     Matrix scalar_multiply(const double multiplier) const;
     Matrix transpose() const;
 
+    /* Neural network operations */
+    Matrix convolve(const Matrix& filter, int stride, std::string padding_type) const;
+    Matrix max_pool(int window_size, int stride) const;
+
     /* Other operations */
+    Matrix& operator=(const Matrix& other);
     void randomize();
     bool operator==(const Matrix& other) const;
     bool operator!=(const Matrix& other) const;
 
     /* Print operations */
     void print() const;
+    void print_dims() const;
 
 private:
     int rows_;
     int columns_;
-    int padding_;
     std::vector<double> data_;
 };
 
