@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <random>
+#include <cmath>
 #include "matrix.hpp"
 #include "utility.hpp"
 
@@ -63,6 +64,16 @@ const double& Matrix::operator()(const int row, const int column) const {
     }
     
     return data_[row * columns_ + column];
+}
+
+double Matrix::get_minimum() const {
+    double min = INFINITY;
+    for (int i = 0; i < rows_ * columns_; ++i) {
+        if (data_[i] < min) {
+            min = data_[i];
+        }
+    }
+    return min;
 }
 
 /******************************************************
@@ -183,7 +194,53 @@ Matrix Matrix::convolve(const Matrix& filter, int stride, std::string padding_ty
 }
 
 Matrix Matrix::max_pool(int window_size, int stride) const {
-    throw std::logic_error("Matrix max_pool: unimplemented");
+    if (stride > window_size) {
+        throw std::invalid_argument("Matrix max_pool: stride must be less than or equal to window_size");
+    }
+    if (stride <= 0) {
+        throw std::invalid_argument("Matrix max_pool: stride must be greater than 0");
+    }
+    if (window_size > rows_ || window_size > columns_) {
+        throw std::invalid_argument("Matrix max_pool: window_size must be less or equal to matrix dimensions");
+    }
+    if (get_minimum() < 0.0) {
+        throw std::logic_error("Matrix max_pool: matrix contains negative numbers, cannot add zero padding");
+    }
+
+    int result_rows = ((rows_ - window_size) + stride - 1) / stride + 1;
+    int result_columns = ((columns_ - window_size) + stride - 1) / stride + 1;
+    Matrix result(result_rows, result_columns);
+
+    int padding_rows = (result_rows - 1) * stride + window_size - rows_;
+    int padding_columns = (result_columns - 1) * stride + window_size - columns_;
+
+    int padding_top = padding_rows / 2 + padding_rows % 2;
+    int padding_bottom = padding_rows / 2;
+    int padding_left = padding_columns / 2 + padding_columns % 2;
+    int padding_right = padding_columns / 2;
+
+    for (int i = 0; i < rows_ + padding_rows - window_size + 1; i += stride) {
+        for (int j = 0; j < columns_ + padding_columns - window_size + 1; j += stride) {
+            double max = 0.0;
+
+            for (int k = 0; k < window_size; ++k) {
+                for (int l = 0; l < window_size; ++l) {
+                    if (i + k >= padding_top &&
+                        i + k < padding_top + rows_ &&
+                        j + l >= padding_left &&
+                        j + l < padding_left + columns_ &&
+                        (*this)(i + k - padding_top, j + l - padding_left) > max) {
+
+                        max = (*this)(i + k - padding_top, j + l - padding_left);
+                    }
+                }
+            }
+
+            result(i / stride, j / stride) = max;
+        }
+    }
+
+    return result;
 }
 
 /******************************************************

@@ -17,6 +17,7 @@ public:
     int get_num_columns() const;
     double& operator()(const int row, const int column);
     const double& operator()(const int row, const int column) const;
+    double get_minimum() const;
 
     /* Matrix operations */
     Matrix operator+(const Matrix& other) const;
