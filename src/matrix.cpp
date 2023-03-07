@@ -186,7 +186,42 @@ Matrix Matrix::convolve(const Matrix& filter, int stride, std::string padding_ty
         throw std::logic_error("Matrix convolve: unimplemented");
     }
     else if (utility::compare_ignore_case(padding_type, "valid")) {
-        throw std::logic_error("Matrix convolve: unimplemented");
+
+        if (stride > filter.rows_ || stride > filter.columns_) {
+        throw std::invalid_argument("Matrix convolve: stride must be less than or equal to filter size");
+        }
+        if (stride <= 0) {
+            throw std::invalid_argument("Matrix convolve: stride must be greater than 0");
+        }
+        if (filter.rows_ > rows_ || filter.columns_ > columns_) {
+            throw std::invalid_argument("Matrix convolve: filter size must be less or equal to matrix dimensions");
+        }
+        if ((rows_ - filter.rows_) % stride != 0 ||
+            (columns_ - filter.columns_) % stride != 0 ||
+            (rows_ == filter.rows_ && stride != rows_) ||
+            (columns_ == filter.columns_ && stride != columns_)) {
+            throw std::invalid_argument("Matrix convolve: Valid padding is not possible for given filter and stride sizes");
+        }
+
+        int result_rows = ((rows_ - filter.rows_) + stride - 1) / stride + 1;
+        int result_columns = ((columns_ - filter.columns_) + stride - 1) / stride + 1;
+        Matrix result(result_rows, result_columns);
+
+        for (int i = 0; i < rows_ - filter.rows_ + 1; i += stride) {
+            for (int j = 0; j < columns_ - filter.columns_ + 1; j += stride) {
+                double sum = 0.0;
+
+                for (int k = 0; k < filter.rows_; ++k) {
+                    for (int l = 0; l < filter.columns_; ++l) {
+                        sum += (*this)(i + k, j + l) * filter(k, l);
+                    }
+                }
+
+                result(i / stride, j / stride) = sum;
+            }
+        }
+
+        return result;
     }
     else {
         throw std::invalid_argument("Matrix convolve: invalid padding_type");
