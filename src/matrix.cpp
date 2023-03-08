@@ -179,23 +179,60 @@ Matrix Matrix::transpose() const {
  *****************************************************/
 
 Matrix Matrix::convolve(const Matrix& filter, int stride, std::string padding_type) const {
+    if (stride > filter.rows_ || stride > filter.columns_) {
+    throw std::invalid_argument("Matrix convolve: stride must be less than or equal to filter size");
+    }
+    if (stride <= 0) {
+        throw std::invalid_argument("Matrix convolve: stride must be greater than 0");
+    }
+    if (filter.rows_ > rows_ || filter.columns_ > columns_) {
+        throw std::invalid_argument("Matrix convolve: filter size must be less or equal to matrix dimensions");
+    }
+
+
     if (utility::compare_ignore_case(padding_type, "full")) {
         throw std::logic_error("Matrix convolve: unimplemented");
     }
     else if (utility::compare_ignore_case(padding_type, "same")) {
-        throw std::logic_error("Matrix convolve: unimplemented");
+
+        int result_rows = rows_;
+        int result_columns = columns_;
+        Matrix result(result_rows, result_columns);
+
+        int padding_rows = (result_rows - 1) * stride + filter.rows_ - rows_;
+        int padding_columns = (result_columns - 1) * stride + filter.columns_ - columns_;
+
+        int padding_top = padding_rows / 2 + padding_rows % 2;
+        int padding_bottom = padding_rows / 2;
+        int padding_left = padding_columns / 2 + padding_columns % 2;
+        int padding_right = padding_columns / 2;
+
+        std::cout << "Padding: " << padding_rows << " " << padding_columns << std::endl;
+
+        for (int i = 0; i < rows_ + padding_rows - filter.rows_ + 1; i += stride) {
+            for (int j = 0; j < columns_ + padding_columns - filter.columns_ + 1; j += stride) {
+                double sum = 0.0;
+
+                for (int k = 0; k < filter.rows_; ++k) {
+                    for (int l = 0; l < filter.columns_; ++l) {
+                        if (i + k >= padding_top &&
+                            i + k < padding_top + rows_ &&
+                            j + l >= padding_left &&
+                            j + l < padding_left + columns_) {
+
+                            sum += (*this)(i + k - padding_top, j + l - padding_left) * filter(k, l);
+                        }
+                    }
+                }
+
+                result(i / stride, j / stride) = sum;
+            }
+        }
+
+        return result;
     }
     else if (utility::compare_ignore_case(padding_type, "valid")) {
 
-        if (stride > filter.rows_ || stride > filter.columns_) {
-        throw std::invalid_argument("Matrix convolve: stride must be less than or equal to filter size");
-        }
-        if (stride <= 0) {
-            throw std::invalid_argument("Matrix convolve: stride must be greater than 0");
-        }
-        if (filter.rows_ > rows_ || filter.columns_ > columns_) {
-            throw std::invalid_argument("Matrix convolve: filter size must be less or equal to matrix dimensions");
-        }
         if ((rows_ - filter.rows_) % stride != 0 ||
             (columns_ - filter.columns_) % stride != 0 ||
             (rows_ == filter.rows_ && stride != rows_) ||
