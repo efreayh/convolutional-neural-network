@@ -191,7 +191,47 @@ Matrix Matrix::convolve(const Matrix& filter, int stride, std::string padding_ty
 
 
     if (utility::compare_ignore_case(padding_type, "full")) {
-        throw std::logic_error("Matrix convolve: unimplemented");
+
+        if (filter.rows_ < 2 ||
+            filter.columns_ < 2 ||
+            (rows_ + filter.rows_ - 2) % stride != 0 ||
+            (columns_ + filter.columns_ - 2) % stride != 0) {
+            throw std::invalid_argument("Matrix convolve: Full padding is not possible for given filter and stride sizes");
+        }
+        
+        int result_rows = (rows_ + filter.rows_ - 2) / stride + 1;
+        int result_columns = (columns_ + filter.columns_ - 2) / stride + 1;
+        Matrix result(result_rows, result_columns);
+
+        int padding_rows = (result_rows - 1) * stride + filter.rows_ - rows_;
+        int padding_columns = (result_columns - 1) * stride + filter.columns_ - columns_;
+
+        int padding_top = padding_rows / 2 + padding_rows % 2;
+        int padding_left = padding_columns / 2 + padding_columns % 2;
+
+        std::cout << "Padding: " << padding_rows << " " << padding_columns << std::endl;
+
+        for (int i = 0; i < rows_ + padding_rows - filter.rows_ + 1; i += stride) {
+            for (int j = 0; j < columns_ + padding_columns - filter.columns_ + 1; j += stride) {
+                double sum = 0.0;
+
+                for (int k = 0; k < filter.rows_; ++k) {
+                    for (int l = 0; l < filter.columns_; ++l) {
+                        if (i + k >= padding_top &&
+                            i + k < padding_top + rows_ &&
+                            j + l >= padding_left &&
+                            j + l < padding_left + columns_) {
+
+                            sum += (*this)(i + k - padding_top, j + l - padding_left) * filter(k, l);
+                        }
+                    }
+                }
+
+                result(i / stride, j / stride) = sum;
+            }
+        }
+
+        return result;
     }
     else if (utility::compare_ignore_case(padding_type, "same")) {
 
@@ -203,9 +243,7 @@ Matrix Matrix::convolve(const Matrix& filter, int stride, std::string padding_ty
         int padding_columns = (result_columns - 1) * stride + filter.columns_ - columns_;
 
         int padding_top = padding_rows / 2 + padding_rows % 2;
-        int padding_bottom = padding_rows / 2;
         int padding_left = padding_columns / 2 + padding_columns % 2;
-        int padding_right = padding_columns / 2;
 
         std::cout << "Padding: " << padding_rows << " " << padding_columns << std::endl;
 
@@ -235,13 +273,13 @@ Matrix Matrix::convolve(const Matrix& filter, int stride, std::string padding_ty
 
         if ((rows_ - filter.rows_) % stride != 0 ||
             (columns_ - filter.columns_) % stride != 0 ||
-            (rows_ == filter.rows_ && stride != rows_) ||
-            (columns_ == filter.columns_ && stride != columns_)) {
+            (rows_ == filter.rows_ && stride < rows_) ||
+            (columns_ == filter.columns_ && stride < columns_)) {
             throw std::invalid_argument("Matrix convolve: Valid padding is not possible for given filter and stride sizes");
         }
 
-        int result_rows = ((rows_ - filter.rows_) + stride - 1) / stride + 1;
-        int result_columns = ((columns_ - filter.columns_) + stride - 1) / stride + 1;
+        int result_rows = (rows_ - filter.rows_) / stride + 1;
+        int result_columns = (columns_ - filter.columns_) / stride + 1;
         Matrix result(result_rows, result_columns);
 
         for (int i = 0; i < rows_ - filter.rows_ + 1; i += stride) {
@@ -287,9 +325,7 @@ Matrix Matrix::max_pool(int window_size, int stride) const {
     int padding_columns = (result_columns - 1) * stride + window_size - columns_;
 
     int padding_top = padding_rows / 2 + padding_rows % 2;
-    int padding_bottom = padding_rows / 2;
     int padding_left = padding_columns / 2 + padding_columns % 2;
-    int padding_right = padding_columns / 2;
 
     for (int i = 0; i < rows_ + padding_rows - window_size + 1; i += stride) {
         for (int j = 0; j < columns_ + padding_columns - window_size + 1; j += stride) {
