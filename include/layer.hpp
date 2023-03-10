@@ -7,7 +7,7 @@ class Layer {
 public:
 
     /* Constructors */
-    Layer(int input_size, int output_size);
+    Layer(const int input_size, const int output_size);
 
     /* Getters */
     int get_input_size() const;

@@ -4,7 +4,7 @@
  * Constructors
  *****************************************************/
 
-Layer::Layer(int input_size, int output_size): 
+Layer::Layer(const int input_size, const int output_size):
     input_size_(input_size), 
     output_size_(output_size),
     weights_(input_size, output_size), 

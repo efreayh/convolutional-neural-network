@@ -8,7 +8,7 @@ class DenseLayer : public Layer {
 public:
 
     /* Constructors */
-    DenseLayer(int input_size, int output_size, std::string activation_function_name, double learning_rate);
+    DenseLayer(const int input_size, const int output_size, const std::string& activation_function_name, const double learning_rate);
 
     /* Layer functionality */
     Matrix forward(const Matrix& input) override;

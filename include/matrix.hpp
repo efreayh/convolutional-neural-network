@@ -8,7 +8,7 @@ class Matrix {
 public:
 
     /* Constructors */
-    Matrix(int rows, int columns);
+    Matrix(const int rows, const int columns);
     Matrix(const std::vector<std::vector<double>>& input_matrix);
     Matrix(const Matrix& other);
 
@@ -30,13 +30,13 @@ public:
     Matrix transpose() const;
 
     /* Neural network operations */
-    Matrix convolve(const Matrix& filter, int stride, std::string padding_type) const;
-    Matrix max_pool(int window_size, int stride) const;
+    Matrix convolve(const Matrix& filter, const int stride, const std::string& padding_type) const;
+    Matrix max_pool(const int window_size, const int stride) const;
 
     /* Other operations */
     Matrix& operator=(const Matrix& other);
     void randomize();
-    void resize(int rows, int columns);
+    void resize(const int rows, const int columns);
     bool operator==(const Matrix& other) const;
     bool operator!=(const Matrix& other) const;
 

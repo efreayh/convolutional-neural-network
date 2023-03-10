@@ -9,7 +9,7 @@
  * Constructors
  *****************************************************/
 
-Matrix::Matrix(int rows, int columns) {
+Matrix::Matrix(const int rows, const int columns) {
     if (rows <= 0 || columns <= 0) {
         throw std::invalid_argument("Matrix constructor: dimensions must be greater than 0");
     }
@@ -178,7 +178,7 @@ Matrix Matrix::transpose() const {
  * Neural network operations
  *****************************************************/
 
-Matrix Matrix::convolve(const Matrix& filter, int stride, std::string padding_type) const {
+Matrix Matrix::convolve(const Matrix& filter, const int stride, const std::string& padding_type) const {
     if (stride > filter.rows_ || stride > filter.columns_) {
     throw std::invalid_argument("Matrix convolve: stride must be less than or equal to filter size");
     }
@@ -299,7 +299,7 @@ Matrix Matrix::convolve(const Matrix& filter, int stride, std::string padding_ty
     }
 }
 
-Matrix Matrix::max_pool(int window_size, int stride) const {
+Matrix Matrix::max_pool(const int window_size, const int stride) const {
     if (stride > window_size) {
         throw std::invalid_argument("Matrix max_pool: stride must be less than or equal to window_size");
     }
@@ -372,7 +372,7 @@ void Matrix::randomize() {
     }
 }
 
-void Matrix::resize(int rows, int columns) {
+void Matrix::resize(const int rows, const int columns) {
     if (rows < 1 || columns < 1) {
         throw std::invalid_argument("Matrix resize: new dimensions cannot be zero or less");
     }

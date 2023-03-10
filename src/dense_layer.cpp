@@ -4,7 +4,7 @@
  * Constructors
  *****************************************************/
 
-DenseLayer::DenseLayer(int input_size, int output_size, std::string activation_function_name, double learning_rate):
+DenseLayer::DenseLayer(const int input_size, const int output_size, const std::string& activation_function_name, const double learning_rate):
     Layer(input_size, output_size),
     function_(activation_function_name),
     learning_rate_(learning_rate) {}
