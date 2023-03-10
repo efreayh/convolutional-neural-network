@@ -209,8 +209,6 @@ Matrix Matrix::convolve(const Matrix& filter, int stride, std::string padding_ty
         int padding_top = padding_rows / 2 + padding_rows % 2;
         int padding_left = padding_columns / 2 + padding_columns % 2;
 
-        std::cout << "Padding: " << padding_rows << " " << padding_columns << std::endl;
-
         for (int i = 0; i < rows_ + padding_rows - filter.rows_ + 1; i += stride) {
             for (int j = 0; j < columns_ + padding_columns - filter.columns_ + 1; j += stride) {
                 double sum = 0.0;
@@ -244,8 +242,6 @@ Matrix Matrix::convolve(const Matrix& filter, int stride, std::string padding_ty
 
         int padding_top = padding_rows / 2 + padding_rows % 2;
         int padding_left = padding_columns / 2 + padding_columns % 2;
-
-        std::cout << "Padding: " << padding_rows << " " << padding_columns << std::endl;
 
         for (int i = 0; i < rows_ + padding_rows - filter.rows_ + 1; i += stride) {
             for (int j = 0; j < columns_ + padding_columns - filter.columns_ + 1; j += stride) {
@@ -374,6 +370,18 @@ void Matrix::randomize() {
     for (int i = 0; i < rows_ * columns_; ++i) {
         data_[i] = dist(generator);
     }
+}
+
+void Matrix::resize(int rows, int columns) {
+    if (rows < 1 || columns < 1) {
+        throw std::invalid_argument("Matrix resize: new dimensions cannot be zero or less");
+    }
+    if (rows * columns != rows_ * columns_) {
+        throw std::invalid_argument("Matrix resize: new dimensions invalid for current matrix data");
+    }
+
+    rows_ = rows;
+    columns_ = columns;
 }
 
 bool Matrix::operator==(const Matrix& other) const {

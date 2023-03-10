@@ -36,6 +36,7 @@ public:
     /* Other operations */
     Matrix& operator=(const Matrix& other);
     void randomize();
+    void resize(int rows, int columns);
     bool operator==(const Matrix& other) const;
     bool operator!=(const Matrix& other) const;
 
