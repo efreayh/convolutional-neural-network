@@ -364,7 +364,8 @@ Matrix& Matrix::operator=(const Matrix& other) {
 }
 
 void Matrix::randomize() {
-    std::default_random_engine generator;
+    std::random_device rd;
+    std::default_random_engine generator(rd());
     std::normal_distribution<double> dist(0, 1);
 
     for (int i = 0; i < rows_ * columns_; ++i) {
