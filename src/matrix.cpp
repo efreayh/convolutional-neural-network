@@ -178,15 +178,15 @@ Matrix Matrix::transpose() const {
  * Neural network operations
  *****************************************************/
 
-Matrix Matrix::convolve(const Matrix& filter, const int stride, const std::string& padding_type) const {
+Matrix Matrix::correlate(const Matrix& filter, const int stride, const std::string& padding_type) const {
     if (stride > filter.rows_ || stride > filter.columns_) {
-    throw std::invalid_argument("Matrix convolve: stride must be less than or equal to filter size");
+    throw std::invalid_argument("Matrix correlate/convolve: stride must be less than or equal to filter size");
     }
     if (stride <= 0) {
-        throw std::invalid_argument("Matrix convolve: stride must be greater than 0");
+        throw std::invalid_argument("Matrix correlate/convolve: stride must be greater than 0");
     }
     if (filter.rows_ > rows_ || filter.columns_ > columns_) {
-        throw std::invalid_argument("Matrix convolve: filter size must be less or equal to matrix dimensions");
+        throw std::invalid_argument("Matrix correlate/convolve: filter size must be less or equal to matrix dimensions");
     }
 
 
@@ -196,7 +196,7 @@ Matrix Matrix::convolve(const Matrix& filter, const int stride, const std::strin
             filter.columns_ < 2 ||
             (rows_ + filter.rows_ - 2) % stride != 0 ||
             (columns_ + filter.columns_ - 2) % stride != 0) {
-            throw std::invalid_argument("Matrix convolve: Full padding is not possible for given filter and stride sizes");
+            throw std::invalid_argument("Matrix correlate/convolve: Full padding is not possible for given filter and stride sizes");
         }
         
         int result_rows = (rows_ + filter.rows_ - 2) / stride + 1;
@@ -271,7 +271,7 @@ Matrix Matrix::convolve(const Matrix& filter, const int stride, const std::strin
             (columns_ - filter.columns_) % stride != 0 ||
             (rows_ == filter.rows_ && stride < rows_) ||
             (columns_ == filter.columns_ && stride < columns_)) {
-            throw std::invalid_argument("Matrix convolve: Valid padding is not possible for given filter and stride sizes");
+            throw std::invalid_argument("Matrix correlate/convolve: Valid padding is not possible for given filter and stride sizes");
         }
 
         int result_rows = (rows_ - filter.rows_) / stride + 1;
@@ -295,8 +295,23 @@ Matrix Matrix::convolve(const Matrix& filter, const int stride, const std::strin
         return result;
     }
     else {
-        throw std::invalid_argument("Matrix convolve: invalid padding_type");
+        throw std::invalid_argument("Matrix correlate/convolve: invalid padding_type");
     }
+}
+
+Matrix Matrix::convolve(const Matrix& filter, const int stride, const std::string& padding_type) const {
+    
+    /* Rotate filter 180 degrees */
+    Matrix new_filter(filter.rows_, filter.columns_);
+
+    for (int i = 0; i < filter.rows_; ++i) {
+        for (int j = 0; j < filter.columns_; ++j) {
+            new_filter(i, j) = filter(filter.rows_ - 1 - i, filter.columns_ - 1 - j);
+        }
+    }
+
+    /* Run correlate with rotated filter */
+    return correlate(new_filter, stride, padding_type);
 }
 
 Matrix Matrix::max_pool(const int window_size, const int stride) const {
