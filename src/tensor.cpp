@@ -13,7 +13,6 @@ Tensor::Tensor(const int depth, const int rows, const int columns):
     
     for (int i = 0; i < depth_; ++i) {
         Matrix matrix(rows, columns);
-        matrix.randomize();
         data_.push_back(matrix);
     }
 }
@@ -56,6 +55,13 @@ Tensor::Tensor(const std::vector<Matrix>& input_data) {
     }
 }
 
+Tensor::Tensor(const Tensor& other) {
+    depth_ = other.depth_;
+    rows_ = other.rows_;
+    columns_ = other.columns_;
+    data_ = other.data_;
+}
+
 /******************************************************
  * Accessors
  *****************************************************/
@@ -89,23 +95,93 @@ const Matrix& Tensor::operator()(const int index) const {
 }
 
 /******************************************************
- * Tensor operations
+ * Operations applied to each matrix
  *****************************************************/
 
-void Tensor::append_matrix(const Matrix& input_data) {
-    if (depth_ <= 0) {
-        depth_ = 1;
-        rows_ = input_data.get_num_rows();
-        columns_ = input_data.get_num_columns();
-        data_.push_back(input_data);
+Tensor Tensor::operator+(const Tensor& other) const {
+    if (depth_ != other.depth_) {
+        throw std::invalid_argument("Tensor add: depths do not match");
     }
-    else if (input_data.get_num_rows() == rows_ && input_data.get_num_columns() == columns_) {
-        ++depth_;
-        data_.push_back(input_data);
+
+    Tensor result;
+    for (int i = 0; i < depth_; ++i) {
+        result.append_matrix(data_[i] + other.data_[i]);
     }
-    else {
-        throw std::invalid_argument("Tensor append_matrix: input matrix must match tensor dimensions");
+    return result;
+}
+
+Tensor& Tensor::operator+=(const Tensor& other) {
+    if (depth_ != other.depth_) {
+        throw std::invalid_argument("Tensor add: depths do not match");
     }
+
+    for (int i = 0; i < depth_; ++i) {
+        data_[i] += other.data_[i];
+    }
+    return *this;
+}
+
+Tensor Tensor::operator-(const Tensor& other) const {
+    if (depth_ != other.depth_) {
+        throw std::invalid_argument("Tensor add: depths do not match");
+    }
+
+    Tensor result;
+    for (int i = 0; i < depth_; ++i) {
+        result.append_matrix(data_[i] - other.data_[i]);
+    }
+    return result;
+}
+
+Tensor& Tensor::operator-=(const Tensor& other) {
+    if (depth_ != other.depth_) {
+        throw std::invalid_argument("Tensor add: depths do not match");
+    }
+
+    for (int i = 0; i < depth_; ++i) {
+        data_[i] -= other.data_[i];
+    }
+    return *this;
+}
+
+Tensor Tensor::operator*(const Tensor& other) const {
+    if (depth_ != other.depth_) {
+        throw std::invalid_argument("Tensor add: depths do not match");
+    }
+
+    Tensor result;
+    for (int i = 0; i < depth_; ++i) {
+        result.append_matrix(data_[i] * other.data_[i]);
+    }
+    return result;
+}
+
+Tensor Tensor::element_wise_multiply(const Tensor& other) const {
+    if (depth_ != other.depth_) {
+        throw std::invalid_argument("Tensor add: depths do not match");
+    }
+
+    Tensor result;
+    for (int i = 0; i < depth_; ++i) {
+        result.append_matrix(data_[i].element_wise_multiply(other.data_[i]));
+    }
+    return result;
+}
+
+Tensor Tensor::scalar_multiply(const double multiplier) const {
+    Tensor result;
+    for (int i = 0; i < depth_; ++i) {
+        result.append_matrix(data_[i].scalar_multiply(multiplier));
+    }
+    return result;
+}
+
+Tensor Tensor::transpose() const {
+    Tensor result;
+    for (int i = 0; i < depth_; ++i) {
+        result.append_matrix(data_[i].transpose());
+    }
+    return result;
 }
 
 /******************************************************
@@ -152,8 +228,82 @@ Tensor Tensor::flatten() const {
 }
 
 /******************************************************
+ * Other operations
+ *****************************************************/
+
+Tensor& Tensor::operator=(const Tensor& other) {
+    if (&other == this) {
+        return *this;
+    }
+
+    depth_ = other.depth_;
+    rows_ = other.rows_;
+    columns_ = other.columns_;
+    data_ = other.data_;
+
+    return *this;
+}
+
+void Tensor::randomize() {
+    for (int i = 0; i < depth_; ++i) {
+        data_[i].randomize();
+    }
+}
+
+bool Tensor::operator==(const Tensor& other) const {
+    if (depth_ != other.depth_) {
+        return false;
+    }
+
+    for (int i = 0; i < depth_; ++i) {
+        if (data_[i] != other.data_[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool Tensor::operator!=(const Tensor& other) const {
+    if (depth_ != other.depth_) {
+        return true;
+    }
+
+    for (int i = 0; i < depth_; ++i) {
+        if (data_[i] != other.data_[i]) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void Tensor::append_matrix(const Matrix& input_data) {
+    if (depth_ <= 0) {
+        depth_ = 1;
+        rows_ = input_data.get_num_rows();
+        columns_ = input_data.get_num_columns();
+        data_.push_back(input_data);
+    }
+    else if (input_data.get_num_rows() == rows_ && input_data.get_num_columns() == columns_) {
+        ++depth_;
+        data_.push_back(input_data);
+    }
+    else {
+        throw std::invalid_argument("Tensor append_matrix: input matrix must match tensor dimensions");
+    }
+}
+
+/******************************************************
  * Print operations
  *****************************************************/
+
+void Tensor::print() const {
+    for (int i = 0; i < depth_; ++i) {
+        std::cout << "Matrix " << (i + 1) << ":" << std::endl;
+        data_[i].print();
+    }
+}
 
 void Tensor::print_dims() const {
     std::cout << "Depth: " << depth_ << " Rows: " << rows_ << " Cols: " << columns_ << std::endl;
