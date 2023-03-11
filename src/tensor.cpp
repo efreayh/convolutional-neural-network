@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <iostream>
+#include <limits>
 #include "tensor.hpp"
 
 /******************************************************
@@ -41,7 +42,13 @@ Tensor::Tensor(const std::vector<Matrix>& input_data) {
         throw std::invalid_argument("Tensor constructor: input_data was empty");
     }
 
-    depth_ = input_data.size();
+    if (input_data.size() <= std::numeric_limits<int>::max()) {
+        depth_ = static_cast<int>(input_data.size());
+    }
+    else {
+        throw std::invalid_argument("Tensor constructor: input_data size was too large");
+    }
+
     rows_ = input_data[0].get_num_rows();
     columns_ = input_data[0].get_num_columns();
 
@@ -222,7 +229,6 @@ Tensor Tensor::flatten() const {
     std::vector<std::vector<double>> vector2d;
     vector2d.push_back(vector1d);
     Matrix matrix(vector2d);
-    matrix = matrix.transpose();
     Tensor result(matrix);
     return result;
 }

@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <random>
 #include <cmath>
+#include <limits>
 #include "matrix.hpp"
 #include "utility.hpp"
 
@@ -24,8 +25,14 @@ Matrix::Matrix(const std::vector<std::vector<double>>& input_matrix) {
         throw std::invalid_argument("Matrix constructor: input matrix cannot be empty");
     }
 
-    rows_ = input_matrix.size();
-    columns_ = input_matrix[0].size();
+    if (input_matrix.size() <= std::numeric_limits<int>::max() && input_matrix[0].size() <= std::numeric_limits<int>::max()) {
+        rows_ = static_cast<int>(input_matrix.size());
+        columns_ = static_cast<int>(input_matrix[0].size());
+    }
+    else {
+        throw std::invalid_argument("Matrix constructor: input_matrix size was too large");
+    }
+
     data_.reserve(rows_ * columns_);
     for (int i = 0; i < rows_; ++i) {
         data_.insert(data_.end(), input_matrix[i].begin(), input_matrix[i].end());
