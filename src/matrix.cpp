@@ -189,7 +189,7 @@ Matrix Matrix::transpose() const {
 
 Matrix Matrix::correlate(const Matrix& filter, const int stride, const std::string& padding_type) const {
     if (stride > filter.rows_ || stride > filter.columns_) {
-    throw std::invalid_argument("Matrix correlate/convolve: stride must be less than or equal to filter size");
+        throw std::invalid_argument("Matrix correlate/convolve: stride must be less than or equal to filter size");
     }
     if (stride <= 0) {
         throw std::invalid_argument("Matrix correlate/convolve: stride must be greater than 0");
