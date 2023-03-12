@@ -5,9 +5,17 @@
  *****************************************************/
 
 DenseLayer::DenseLayer(const int input_size, const int output_size, const std::string& activation_function_name, const double learning_rate):
-    Layer(input_size, output_size),
+    input_size_(input_size), 
+    output_size_(output_size),
+    weights_(1, input_size, output_size), 
+    biases_(1, 1, output_size),
+    input_(1, 1, input_size),
+    z_(1, 1, output_size),
     function_(activation_function_name),
-    learning_rate_(learning_rate) {}
+    learning_rate_(learning_rate) {
+    
+    weights_.randomize();
+}
 
 /******************************************************
  * Layer functionality

@@ -15,6 +15,12 @@ public:
     Tensor backward(const Tensor& output) override;
     
 private:
+    int input_size_;
+    int output_size_;
+    Tensor weights_;
+    Tensor biases_;
+    Tensor input_;
+    Tensor z_;
     ActivationFunction function_;
     double learning_rate_;
 };
