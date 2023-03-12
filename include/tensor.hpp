@@ -32,7 +32,6 @@ public:
     Tensor element_wise_multiply(const Tensor& other) const;
     Tensor scalar_multiply(const double multiplier) const;
     Tensor transpose() const;
-    Tensor convolve(const Tensor& filters, const int stride, const std::string& padding_type) const;
     Tensor max_pool(const int window_size, const int stride) const;
 
     /* Neural network operations */
@@ -41,6 +40,7 @@ public:
     /* Other operations */
     Tensor& operator=(const Tensor& other);
     void randomize();
+    void reshape(const int depth, const int rows, const int columns);
     bool operator==(const Tensor& other) const;
     bool operator!=(const Tensor& other) const;
     void append_matrix(const Matrix& input_data);

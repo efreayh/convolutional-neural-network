@@ -194,18 +194,6 @@ Tensor Tensor::transpose() const {
     return result;
 }
 
-Tensor Tensor::convolve(const Tensor& filters, const int stride, const std::string& padding_type) const {
-    if (depth_ != filters.depth_) {
-        throw std::invalid_argument("Tensor convolve: depth of filters does not match depth of tensor");
-    }
-
-    Tensor result;
-    for (int i = 0; i < depth_; ++i) {
-        result.append_matrix(data_[i].convolve(filters.data_[i], stride, padding_type));
-    }
-    return result;
-}
-
 Tensor Tensor::max_pool(const int window_size, const int stride) const {
     Tensor result;
     for (int i = 0; i < depth_; ++i) {
@@ -257,6 +245,41 @@ void Tensor::randomize() {
     for (int i = 0; i < depth_; ++i) {
         data_[i].randomize();
     }
+}
+
+void Tensor::reshape(const int depth, const int rows, const int columns) {
+    if (depth < 1 || rows < 1 || columns < 1) {
+        throw std::invalid_argument("Tensor reshape: new dimensions cannot be zero or less");
+    }
+    if (depth * rows * columns != depth_ * rows_ * columns_) {
+        throw std::invalid_argument("Tensor reshape: new dimensions invalid for current tensor data");
+    }
+
+    std::vector<Matrix> new_data;
+    int count = 0;
+    std::vector<double> current_data;
+
+    for (int i = 0; i < depth_; ++i) {
+        for (int j = 0; j < rows_; ++j) {
+            for (int k = 0; k < columns_; ++k) {
+                current_data.push_back(data_[i](j, k));
+                ++count;
+
+                if (count >= rows * columns) {
+                    Matrix matrix(std::vector<std::vector<double>>(1, current_data));
+                    matrix.reshape(rows, columns);
+                    new_data.push_back(matrix);
+                    count = 0;
+                    current_data.clear();
+                }
+            }
+        }
+    }
+
+    depth_ = depth;
+    rows_ = rows;
+    columns_ = columns;
+    data_ = new_data;
 }
 
 bool Tensor::operator==(const Tensor& other) const {

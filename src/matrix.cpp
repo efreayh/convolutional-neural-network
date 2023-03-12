@@ -397,12 +397,12 @@ void Matrix::randomize() {
     }
 }
 
-void Matrix::resize(const int rows, const int columns) {
+void Matrix::reshape(const int rows, const int columns) {
     if (rows < 1 || columns < 1) {
-        throw std::invalid_argument("Matrix resize: new dimensions cannot be zero or less");
+        throw std::invalid_argument("Matrix reshape: new dimensions cannot be zero or less");
     }
     if (rows * columns != rows_ * columns_) {
-        throw std::invalid_argument("Matrix resize: new dimensions invalid for current matrix data");
+        throw std::invalid_argument("Matrix reshape: new dimensions invalid for current matrix data");
     }
 
     rows_ = rows;
