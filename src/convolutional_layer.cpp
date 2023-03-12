@@ -1,7 +1,7 @@
 #include <string>
+#include <stdexcept>
 #include "convolutional_layer.hpp"
 #include "tensor.hpp"
-#include "activation_function.hpp"
 #include "utility.hpp"
 
 /******************************************************
@@ -16,6 +16,8 @@ ConvolutionalLayer::ConvolutionalLayer(const int output_depth,
                                        const int filter_columns,
                                        const double learning_rate):
     output_depth_(output_depth),
+    output_rows_(utility::convolve_result_dim(input_rows, filter_rows, 1, "valid")),
+    output_columns_(utility::convolve_result_dim(input_columns, filter_columns, 1, "valid")),
     input_depth_(input_depth),
     input_rows_(input_rows),
     input_columns_(input_columns),
@@ -23,9 +25,7 @@ ConvolutionalLayer::ConvolutionalLayer(const int output_depth,
     filter_columns_(filter_columns),
     stride_(1),
     filters_(output_depth, Tensor(input_depth, filter_rows, filter_columns)),
-    biases_(output_depth,
-            utility::convolve_result_dim(input_rows, filter_rows, 1, "valid"),
-            utility::convolve_result_dim(input_columns, filter_columns, 1, "valid")),
+    biases_(output_depth, output_rows_, output_columns_),
     learning_rate_(learning_rate) {
     
     for (int i = 0; i < output_depth; ++i) {
@@ -38,6 +38,10 @@ ConvolutionalLayer::ConvolutionalLayer(const int output_depth,
  *****************************************************/
 
 Tensor ConvolutionalLayer::forward(const Tensor& input) {
+    if (input.get_depth() != input_depth_ || input.get_num_rows() != input_rows_ || input.get_num_columns() != input_columns_) {
+        throw std::invalid_argument("ConvolutionalLayer forward: invalid input dimensions");
+    }
+
     input_ = input;
     output_ = biases_;
 
@@ -51,6 +55,10 @@ Tensor ConvolutionalLayer::forward(const Tensor& input) {
 }
 
 Tensor ConvolutionalLayer::backward(const Tensor& output) {
+    if (output.get_depth() != output_depth_ || output.get_num_rows() != output_rows_ || output.get_num_columns() != output_columns_) {
+        throw std::invalid_argument("ConvolutionalLayer forward: invalid input dimensions");
+    }
+
     std::vector<Tensor> filters_gradient(output_depth_, Tensor(input_depth_, filter_rows_, filter_columns_));
     Tensor input_gradient(input_depth_, input_rows_, input_columns_);
 

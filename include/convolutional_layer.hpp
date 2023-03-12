@@ -24,6 +24,8 @@ public:
     
 private:
     int output_depth_;
+    int output_rows_;
+    int output_columns_;
     int input_depth_;
     int input_rows_;
     int input_columns_;
