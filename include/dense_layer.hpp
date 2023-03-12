@@ -1,6 +1,8 @@
 #ifndef DENSE_LAYER_HPP
 #define DENSE_LAYER_HPP
 
+#include <string>
+#include "tensor.hpp"
 #include "layer.hpp"
 #include "activation_function.hpp"
 

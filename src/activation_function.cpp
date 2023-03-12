@@ -1,7 +1,11 @@
+#include <string>
+#include <functional>
 #include <stdexcept>
 #include <cmath>
 #include "activation_function.hpp"
 #include "utility.hpp"
+#include "matrix.hpp"
+#include "tensor.hpp"
 
 /******************************************************
  * Constructors

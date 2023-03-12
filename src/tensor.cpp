@@ -1,7 +1,10 @@
+#include <vector>
+#include <string>
 #include <stdexcept>
 #include <iostream>
 #include <limits>
 #include "tensor.hpp"
+#include "matrix.hpp"
 
 /******************************************************
  * Constructors

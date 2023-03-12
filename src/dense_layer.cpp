@@ -1,4 +1,8 @@
+#include <string>
+#include <stdexcept>
 #include "dense_layer.hpp"
+#include "tensor.hpp"
+#include "activation_function.hpp"
 
 /******************************************************
  * Constructors
@@ -22,12 +26,20 @@ DenseLayer::DenseLayer(const int input_size, const int output_size, const std::s
  *****************************************************/
 
 Tensor DenseLayer::forward(const Tensor& input) {
+    if (input.get_depth() != 1) {
+        throw std::invalid_argument("DenseLayer forward: tensor must have depth 1");
+    }
+
     input_ = input;
     z_ = input * weights_ + biases_;
     return function_.apply_function(z_);
 }
 
 Tensor DenseLayer::backward(const Tensor& output) {
+    if (output.get_depth() != 1) {
+        throw std::invalid_argument("DenseLayer forward: tensor must have depth 1");
+    }
+
     Tensor delta = output.element_wise_multiply(function_.apply_derivative(z_));
     Tensor weights_gradient = input_.transpose() * delta;
     Tensor biases_gradient = delta;
