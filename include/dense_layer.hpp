@@ -11,8 +11,8 @@ public:
     DenseLayer(const int input_size, const int output_size, const std::string& activation_function_name, const double learning_rate);
 
     /* Layer functionality */
-    Matrix forward(const Matrix& input) override;
-    Matrix backward(const Matrix& output) override;
+    Tensor forward(const Tensor& input) override;
+    Tensor backward(const Tensor& output) override;
     
 private:
     ActivationFunction function_;

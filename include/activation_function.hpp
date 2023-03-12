@@ -4,6 +4,7 @@
 #include <string>
 #include <functional>
 #include "matrix.hpp"
+#include "tensor.hpp"
 
 class ActivationFunction {
 public:
@@ -12,8 +13,8 @@ public:
     ActivationFunction(const std::string& function_name);
 
     /* Core functionality */
-    Matrix apply_function(const Matrix& input_matrix) const;
-    Matrix apply_derivative(const Matrix& input_matrix) const;
+    Tensor apply_function(const Tensor& input_tensor) const;
+    Tensor apply_derivative(const Tensor& input_tensor) const;
 
 private:
     /* Functions */

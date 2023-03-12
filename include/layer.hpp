@@ -1,7 +1,7 @@
 #ifndef LAYER_HPP
 #define LAYER_HPP
 
-#include "matrix.hpp"
+#include "tensor.hpp"
 
 class Layer {
 public:
@@ -14,16 +14,16 @@ public:
     int get_output_size() const;
 
     /* Layer functionality */
-    virtual Matrix forward(const Matrix& input) = 0;
-    virtual Matrix backward(const Matrix& output) = 0;
+    virtual Tensor forward(const Tensor& input) = 0;
+    virtual Tensor backward(const Tensor& output) = 0;
 
 protected:
     int input_size_;
     int output_size_;
-    Matrix weights_;
-    Matrix biases_;
-    Matrix input_;
-    Matrix z_;
+    Tensor weights_;
+    Tensor biases_;
+    Tensor input_;
+    Tensor z_;
 };
 
 #endif

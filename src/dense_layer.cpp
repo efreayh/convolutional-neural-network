@@ -13,17 +13,17 @@ DenseLayer::DenseLayer(const int input_size, const int output_size, const std::s
  * Layer functionality
  *****************************************************/
 
-Matrix DenseLayer::forward(const Matrix& input) {
+Tensor DenseLayer::forward(const Tensor& input) {
     input_ = input;
     z_ = input * weights_ + biases_;
     return function_.apply_function(z_);
 }
 
-Matrix DenseLayer::backward(const Matrix& output) {
-    Matrix delta = output.element_wise_multiply(function_.apply_derivative(z_));
-    Matrix weights_gradient = input_.transpose() * delta;
-    Matrix biases_gradient = delta;
-    Matrix input_gradient = delta * weights_.transpose();
+Tensor DenseLayer::backward(const Tensor& output) {
+    Tensor delta = output.element_wise_multiply(function_.apply_derivative(z_));
+    Tensor weights_gradient = input_.transpose() * delta;
+    Tensor biases_gradient = delta;
+    Tensor input_gradient = delta * weights_.transpose();
 
     weights_ -= weights_gradient.scalar_multiply(learning_rate_);
     biases_ -= biases_gradient.scalar_multiply(learning_rate_);

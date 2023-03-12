@@ -20,12 +20,20 @@ ActivationFunction::ActivationFunction(const std::string& function_name) {
  * Core functionality
  *****************************************************/
 
-Matrix ActivationFunction::apply_function(const Matrix& input_matrix) const {
-    return activation_function_(input_matrix);
+Tensor ActivationFunction::apply_function(const Tensor& input_tensor) const {
+    Tensor result;
+    for (int i = 0; i < input_tensor.get_depth(); ++i) {
+        result.append_matrix(activation_function_(input_tensor(i)));
+    }
+    return result;
 }
 
-Matrix ActivationFunction::apply_derivative(const Matrix& input_matrix) const {
-    return activation_derivative_(input_matrix);
+Tensor ActivationFunction::apply_derivative(const Tensor& input_tensor) const {
+    Tensor result;
+    for (int i = 0; i < input_tensor.get_depth(); ++i) {
+        result.append_matrix(activation_derivative_(input_tensor(i)));
+    }
+    return result;
 }
 
 /******************************************************
