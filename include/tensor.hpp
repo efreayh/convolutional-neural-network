@@ -23,7 +23,7 @@ public:
     Matrix& operator()(const int index);
     const Matrix& operator()(const int index) const;
 
-    /* Operations applied to each matrix */
+    /* Element wise operations applied to each matrix */
     Tensor operator+(const Tensor& other) const;
     Tensor& operator+=(const Tensor& other);
     Tensor operator-(const Tensor& other) const;
@@ -32,10 +32,10 @@ public:
     Tensor element_wise_multiply(const Tensor& other) const;
     Tensor scalar_multiply(const double multiplier) const;
     Tensor transpose() const;
-
-    /* Neural network operations */
     Tensor convolve(const Tensor& filters, const int stride, const std::string& padding_type) const;
     Tensor max_pool(const int window_size, const int stride) const;
+
+    /* Neural network operations */
     Tensor flatten() const;
 
     /* Other operations */

@@ -105,7 +105,7 @@ const Matrix& Tensor::operator()(const int index) const {
 }
 
 /******************************************************
- * Operations applied to each matrix
+ * Element wise operations applied to each matrix
  *****************************************************/
 
 Tensor Tensor::operator+(const Tensor& other) const {
@@ -194,10 +194,6 @@ Tensor Tensor::transpose() const {
     return result;
 }
 
-/******************************************************
- * Neural network operations
- *****************************************************/
-
 Tensor Tensor::convolve(const Tensor& filters, const int stride, const std::string& padding_type) const {
     if (depth_ != filters.depth_) {
         throw std::invalid_argument("Tensor convolve: depth of filters does not match depth of tensor");
@@ -217,6 +213,10 @@ Tensor Tensor::max_pool(const int window_size, const int stride) const {
     }
     return result;
 }
+
+/******************************************************
+ * Neural network operations
+ *****************************************************/
 
 Tensor Tensor::flatten() const {
     std::vector<double> vector1d;
