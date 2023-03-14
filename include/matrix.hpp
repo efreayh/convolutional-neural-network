@@ -32,7 +32,8 @@ public:
     /* Neural network operations */
     Matrix correlate(const Matrix& filter, const int stride, const std::string& padding_type) const;
     Matrix convolve(const Matrix& filter, const int stride, const std::string& padding_type) const;
-    Matrix max_pool(const int window_size, const int stride) const;
+    Matrix max_pool_forward(const int window_size, const int stride) const;
+    Matrix max_pool_backward(const Matrix& output, const int window_size, const int stride) const;
 
     /* Other operations */
     Matrix& operator=(const Matrix& other);

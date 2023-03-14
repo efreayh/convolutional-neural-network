@@ -32,7 +32,8 @@ public:
     Tensor element_wise_multiply(const Tensor& other) const;
     Tensor scalar_multiply(const double multiplier) const;
     Tensor transpose() const;
-    Tensor max_pool(const int window_size, const int stride) const;
+    Tensor max_pool_forward(const int window_size, const int stride) const;
+    Tensor max_pool_backward(const Tensor& output, const int window_size, const int stride) const;
 
     /* Neural network operations */
     Tensor flatten() const;

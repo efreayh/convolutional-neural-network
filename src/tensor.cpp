@@ -122,7 +122,7 @@ Tensor Tensor::operator+(const Tensor& other) const {
 
 Tensor& Tensor::operator+=(const Tensor& other) {
     if (depth_ != other.depth_) {
-        throw std::invalid_argument("Tensor add: depths do not match");
+        throw std::invalid_argument("Tensor addition assignment: depths do not match");
     }
 
     for (int i = 0; i < depth_; ++i) {
@@ -133,7 +133,7 @@ Tensor& Tensor::operator+=(const Tensor& other) {
 
 Tensor Tensor::operator-(const Tensor& other) const {
     if (depth_ != other.depth_) {
-        throw std::invalid_argument("Tensor add: depths do not match");
+        throw std::invalid_argument("Tensor subtract: depths do not match");
     }
 
     Tensor result;
@@ -145,7 +145,7 @@ Tensor Tensor::operator-(const Tensor& other) const {
 
 Tensor& Tensor::operator-=(const Tensor& other) {
     if (depth_ != other.depth_) {
-        throw std::invalid_argument("Tensor add: depths do not match");
+        throw std::invalid_argument("Tensor subtraction assignment: depths do not match");
     }
 
     for (int i = 0; i < depth_; ++i) {
@@ -156,7 +156,7 @@ Tensor& Tensor::operator-=(const Tensor& other) {
 
 Tensor Tensor::operator*(const Tensor& other) const {
     if (depth_ != other.depth_) {
-        throw std::invalid_argument("Tensor add: depths do not match");
+        throw std::invalid_argument("Tensor multiply: depths do not match");
     }
 
     Tensor result;
@@ -168,7 +168,7 @@ Tensor Tensor::operator*(const Tensor& other) const {
 
 Tensor Tensor::element_wise_multiply(const Tensor& other) const {
     if (depth_ != other.depth_) {
-        throw std::invalid_argument("Tensor add: depths do not match");
+        throw std::invalid_argument("Tensor element_wise_multiply: depths do not match");
     }
 
     Tensor result;
@@ -194,10 +194,22 @@ Tensor Tensor::transpose() const {
     return result;
 }
 
-Tensor Tensor::max_pool(const int window_size, const int stride) const {
+Tensor Tensor::max_pool_forward(const int window_size, const int stride) const {
     Tensor result;
     for (int i = 0; i < depth_; ++i) {
-        result.append_matrix(data_[i].max_pool(window_size, stride));
+        result.append_matrix(data_[i].max_pool_forward(window_size, stride));
+    }
+    return result;
+}
+
+Tensor Tensor::max_pool_backward(const Tensor& output, const int window_size, const int stride) const {
+    if (depth_ != output.depth_) {
+        throw std::invalid_argument("Tensor max_pool_backward: depths do not match");
+    }
+
+    Tensor result;
+    for (int i = 0; i < depth_; ++i) {
+        result.append_matrix(data_[i].max_pool_backward(output.data_[i], window_size, stride));
     }
     return result;
 }

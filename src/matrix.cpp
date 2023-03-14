@@ -323,18 +323,18 @@ Matrix Matrix::convolve(const Matrix& filter, const int stride, const std::strin
     return correlate(new_filter, stride, padding_type);
 }
 
-Matrix Matrix::max_pool(const int window_size, const int stride) const {
+Matrix Matrix::max_pool_forward(const int window_size, const int stride) const {
     if (stride > window_size) {
-        throw std::invalid_argument("Matrix max_pool: stride must be less than or equal to window_size");
+        throw std::invalid_argument("Matrix max_pool_forward: stride must be less than or equal to window_size");
     }
     if (stride <= 0) {
-        throw std::invalid_argument("Matrix max_pool: stride must be greater than 0");
+        throw std::invalid_argument("Matrix max_pool_forward: stride must be greater than 0");
     }
     if (window_size > rows_ || window_size > columns_) {
-        throw std::invalid_argument("Matrix max_pool: window_size must be less or equal to matrix dimensions");
+        throw std::invalid_argument("Matrix max_pool_forward: window_size must be less or equal to matrix dimensions");
     }
     if (get_minimum() < 0.0) {
-        throw std::logic_error("Matrix max_pool: matrix contains negative numbers, cannot add zero padding");
+        throw std::logic_error("Matrix max_pool_forward: matrix contains negative numbers, cannot add zero padding");
     }
 
     int result_rows = ((rows_ - window_size) + stride - 1) / stride + 1;
@@ -357,7 +357,7 @@ Matrix Matrix::max_pool(const int window_size, const int stride) const {
                         i + k < padding_top + rows_ &&
                         j + l >= padding_left &&
                         j + l < padding_left + columns_ &&
-                        (*this)(i + k - padding_top, j + l - padding_left) > max) {
+                        (*this)(i + k - padding_top, j + l - padding_left) >= max) {
 
                         max = (*this)(i + k - padding_top, j + l - padding_left);
                     }
@@ -365,6 +365,63 @@ Matrix Matrix::max_pool(const int window_size, const int stride) const {
             }
 
             result(i / stride, j / stride) = max;
+        }
+    }
+
+    return result;
+}
+
+Matrix Matrix::max_pool_backward(const Matrix& output, const int window_size, const int stride) const {
+    if (stride > window_size) {
+        throw std::invalid_argument("Matrix max_pool_backward: stride must be less than or equal to window_size");
+    }
+    if (stride <= 0) {
+        throw std::invalid_argument("Matrix max_pool_backward: stride must be greater than 0");
+    }
+    if (window_size > rows_ || window_size > columns_) {
+        throw std::invalid_argument("Matrix max_pool_backward: window_size must be less or equal to matrix dimensions");
+    }
+    if (get_minimum() < 0.0) {
+        throw std::logic_error("Matrix max_pool_backward: matrix contains negative numbers, cannot add zero padding");
+    }
+
+    int result_rows = ((rows_ - window_size) + stride - 1) / stride + 1;
+    int result_columns = ((columns_ - window_size) + stride - 1) / stride + 1;
+
+    if (output.rows_ != result_rows || output.columns_ != result_columns) {
+        throw std::invalid_argument("Matrix max_pool_backward: output matrix doesn't match expected output dimensions");
+    }
+
+    Matrix result(rows_, columns_);
+
+    int padding_rows = (result_rows - 1) * stride + window_size - rows_;
+    int padding_columns = (result_columns - 1) * stride + window_size - columns_;
+
+    int padding_top = padding_rows / 2 + padding_rows % 2;
+    int padding_left = padding_columns / 2 + padding_columns % 2;
+
+    for (int i = 0; i < rows_ + padding_rows - window_size + 1; i += stride) {
+        for (int j = 0; j < columns_ + padding_columns - window_size + 1; j += stride) {
+            double max = 0.0;
+            int max_k = 0;
+            int max_l = 0;
+
+            for (int k = 0; k < window_size; ++k) {
+                for (int l = 0; l < window_size; ++l) {
+                    if (i + k >= padding_top &&
+                        i + k < padding_top + rows_ &&
+                        j + l >= padding_left &&
+                        j + l < padding_left + columns_ &&
+                        (*this)(i + k - padding_top, j + l - padding_left) >= max) {
+
+                        max = (*this)(i + k - padding_top, j + l - padding_left);
+                        max_k = k;
+                        max_l = l;
+                    }
+                }
+            }
+
+            result(i + max_k - padding_top, j + max_l - padding_left) = output(i / stride, j / stride);
         }
     }
 
