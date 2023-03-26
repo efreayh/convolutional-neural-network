@@ -38,6 +38,7 @@ public:
     /* Other operations */
     Matrix& operator=(const Matrix& other);
     void randomize();
+    void randomize(const double mean, const double std_dev);
     void reshape(const int rows, const int columns);
     bool operator==(const Matrix& other) const;
     bool operator!=(const Matrix& other) const;

@@ -454,6 +454,16 @@ void Matrix::randomize() {
     }
 }
 
+void Matrix::randomize(const double mean, const double std_dev) {
+    std::random_device rd;
+    std::default_random_engine generator(rd());
+    std::normal_distribution<double> dist(mean, std_dev);
+
+    for (int i = 0; i < rows_ * columns_; ++i) {
+        data_[i] = dist(generator);
+    }
+}
+
 void Matrix::reshape(const int rows, const int columns) {
     if (rows < 1 || columns < 1) {
         throw std::invalid_argument("Matrix reshape: new dimensions cannot be zero or less");

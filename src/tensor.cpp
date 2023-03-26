@@ -259,6 +259,12 @@ void Tensor::randomize() {
     }
 }
 
+void Tensor::randomize(const double mean, const double std_dev) {
+    for (int i = 0; i < depth_; ++i) {
+        data_[i].randomize(mean, std_dev);
+    }
+}
+
 void Tensor::reshape(const int depth, const int rows, const int columns) {
     if (depth < 1 || rows < 1 || columns < 1) {
         throw std::invalid_argument("Tensor reshape: new dimensions cannot be zero or less");

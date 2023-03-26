@@ -41,6 +41,7 @@ public:
     /* Other operations */
     Tensor& operator=(const Tensor& other);
     void randomize();
+    void randomize(const double mean, const double std_dev);
     void reshape(const int depth, const int rows, const int columns);
     bool operator==(const Tensor& other) const;
     bool operator!=(const Tensor& other) const;
