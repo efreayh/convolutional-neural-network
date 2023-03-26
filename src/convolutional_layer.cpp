@@ -1,5 +1,6 @@
 #include <string>
 #include <stdexcept>
+#include <cmath>
 #include "convolutional_layer.hpp"
 #include "tensor.hpp"
 #include "utility.hpp"
@@ -29,7 +30,7 @@ ConvolutionalLayer::ConvolutionalLayer(const int output_depth,
     learning_rate_(learning_rate) {
     
     for (int i = 0; i < output_depth; ++i) {
-        filters_[i].randomize();
+        filters_[i].randomize(0, sqrt(2.0 / (filter_rows * filter_columns * input_depth)));
     }
 } 
 

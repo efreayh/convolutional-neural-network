@@ -61,7 +61,7 @@ Tensor ActivationLayer::sigmoid(const Tensor& in) const {
     for (int i = 0; i < in.get_depth(); ++i) {
         for (int j = 0; j < in.get_num_rows(); ++j) {
             for (int k = 0; k < in.get_num_columns(); ++k) {
-                double sigmoid = 1 / (1 + std::exp(-in(i)(j, k)));
+                double sigmoid = 1.0 / (1 + std::exp(-in(i)(j, k)));
                 result(i)(j, k) = sigmoid;
             }
         }
@@ -76,7 +76,7 @@ Tensor ActivationLayer::sigmoid_derivative(const Tensor& in) const {
     for (int i = 0; i < in.get_depth(); ++i) {
         for (int j = 0; j < in.get_num_rows(); ++j) {
             for (int k = 0; k < in.get_num_columns(); ++k) {
-                double sigmoid = 1 / (1 + std::exp(-in(i)(j, k)));
+                double sigmoid = 1.0 / (1 + std::exp(-in(i)(j, k)));
                 double sigmoid_derivative = sigmoid * (1 - sigmoid);
                 result(i)(j, k) = sigmoid_derivative;
             }

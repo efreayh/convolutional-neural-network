@@ -1,5 +1,6 @@
 #include <string>
 #include <stdexcept>
+#include <cmath>
 #include "dense_layer.hpp"
 #include "tensor.hpp"
 
@@ -15,7 +16,7 @@ DenseLayer::DenseLayer(const int input_size, const int output_size, const double
     input_(1, 1, input_size),
     learning_rate_(learning_rate) {
     
-    weights_.randomize();
+    weights_.randomize(0, sqrt(1.0 / input_size));
 }
 
 /******************************************************
