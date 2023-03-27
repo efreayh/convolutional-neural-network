@@ -137,5 +137,6 @@ Tensor ActivationLayer::softmax(const Tensor& in) const {
 }
 
 Tensor ActivationLayer::softmax_derivative(const Tensor& in) const {
+    (void)in;
     throw std::logic_error("Unimplemented");
 }
