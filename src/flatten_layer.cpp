@@ -1,3 +1,4 @@
+#include "tensor.hpp"
 #include "flatten_layer.hpp"
 
 /******************************************************

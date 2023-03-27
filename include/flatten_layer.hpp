@@ -1,6 +1,7 @@
 #ifndef FLATTEN_LAYER_HPP
 #define FLATTEN_LAYER_HPP
 
+#include "tensor.hpp"
 #include "layer.hpp"
 
 class FlattenLayer : public Layer {

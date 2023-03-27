@@ -22,10 +22,10 @@ public:
 private:
     int train_size_;
     int test_size_;
-    std::vector<std::vector<double>> train_data_;
-    std::vector<std::vector<double>> train_labels_;
-    std::vector<std::vector<double>> test_data_;
-    std::vector<std::vector<double>> test_labels_;
+    std::vector<Tensor> train_data_;
+    std::vector<Tensor> train_labels_;
+    std::vector<Tensor> test_data_;
+    std::vector<Tensor> test_labels_;
 };
 
 #endif

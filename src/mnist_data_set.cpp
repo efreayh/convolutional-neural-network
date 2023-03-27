@@ -52,29 +52,45 @@ MNISTDataSet::MNISTDataSet(const std::string& file_path) {
     }
 
     /* Shuffle the data */
-    std::vector<std::vector<double>> data;
+    std::vector<std::vector<double>> data_set;
     for (size_t i = 0; i < one_hot_labels.size(); ++i) {
-        data.push_back(std::vector<double>());
-        data.back().insert(data.back().end(), one_hot_labels[i].begin(), one_hot_labels[i].end());
-        data.back().insert(data.back().end(), pixel_values[i].begin(), pixel_values[i].end());
+        data_set.push_back(std::vector<double>());
+        data_set.back().insert(data_set.back().end(), one_hot_labels[i].begin(), one_hot_labels[i].end());
+        data_set.back().insert(data_set.back().end(), pixel_values[i].begin(), pixel_values[i].end());
     }
-    std::random_shuffle(data.begin(), data.end());
+    std::random_shuffle(data_set.begin(), data_set.end());
 
     /* Split into train and test sets */
     const double train_ratio = 0.8;
-    const size_t train_size = std::floor(data.size() * train_ratio);
-    auto train_end = data.begin() + train_size;
-    auto train = std::vector<std::vector<double>>(data.begin(), train_end);
-    auto test = std::vector<std::vector<double>>(train_end, data.end());
+    const size_t train_size = std::floor(data_set.size() * train_ratio);
+    auto train_end = data_set.begin() + train_size;
+    auto train = std::vector<std::vector<double>>(data_set.begin(), train_end);
+    auto test = std::vector<std::vector<double>>(train_end, data_set.end());
 
     /* Separate labels and data */
     for (size_t i = 0; i < train.size(); ++i) {
-        train_labels_.push_back(std::vector<double>(train[i].begin(), train[i].begin() + 10));
-        train_data_.push_back(std::vector<double>(train[i].begin() + 10, train[i].end()));
+        std::vector<double> label_vec(train[i].begin(), train[i].begin() + 10);
+        Matrix label_matrix({label_vec});
+        Tensor label_tensor(label_matrix);
+        train_labels_.push_back(label_tensor);
+
+        std::vector<double> data_vec(train[i].begin() + 10, train[i].end());
+        Matrix data_matrix({data_vec});
+        Tensor data_tensor(data_matrix);
+        data_tensor.reshape(1, 28, 28);
+        train_data_.push_back(data_tensor);
     }
     for (size_t i = 0; i < test.size(); ++i) {
-        test_labels_.push_back(std::vector<double>(test[i].begin(), test[i].begin() + 10));
-        test_data_.push_back(std::vector<double>(test[i].begin() + 10, test[i].end()));
+        std::vector<double> label_vec(test[i].begin(), test[i].begin() + 10);
+        Matrix label_matrix({label_vec});
+        Tensor label_tensor(label_matrix);
+        test_labels_.push_back(label_tensor);
+
+        std::vector<double> data_vec(test[i].begin() + 10, test[i].end());
+        Matrix data_matrix({data_vec});
+        Tensor data_tensor(data_matrix);
+        data_tensor.reshape(1, 28, 28);
+        test_data_.push_back(data_tensor);
     }
 
     /* Save train and test set sizes */
@@ -98,40 +114,26 @@ Tensor MNISTDataSet::get_train_data(const int position) const {
     if (position < 0 || position >= train_size_) {
         throw std::invalid_argument("MNISTDataSet get_train_data: position out of bounds");
     }
-    std::vector<std::vector<double>> result_vec = {train_data_[position]};
-    Matrix result_matrix(result_vec);
-    Tensor result_tensor(result_matrix);
-    result_tensor.reshape(1, 28, 28);
-    return result_tensor;
+    return train_data_[position];
 }
 
 Tensor MNISTDataSet::get_train_label(const int position) const {
     if (position < 0 || position >= train_size_) {
         throw std::invalid_argument("MNISTDataSet get_train_label: position out of bounds");
     }
-    std::vector<std::vector<double>> result_vec = {train_labels_[position]};
-    Matrix result_matrix(result_vec);
-    Tensor result_tensor(result_matrix);
-    return result_tensor;
+    return train_labels_[position];
 }
 
 Tensor MNISTDataSet::get_test_data(const int position) const {
     if (position < 0 || position >= test_size_) {
         throw std::invalid_argument("MNISTDataSet get_test_data: position out of bounds");
     }
-    std::vector<std::vector<double>> result_vec = {test_data_[position]};
-    Matrix result_matrix(result_vec);
-    Tensor result_tensor(result_matrix);
-    result_tensor.reshape(1, 28, 28);
-    return result_tensor;
+    return test_data_[position];
 }
 
 Tensor MNISTDataSet::get_test_label(const int position) const {
     if (position < 0 || position >= test_size_) {
         throw std::invalid_argument("MNISTDataSet get_test_label: position out of bounds");
     }
-    std::vector<std::vector<double>> result_vec = {test_labels_[position]};
-    Matrix result_matrix(result_vec);
-    Tensor result_tensor(result_matrix);
-    return result_tensor;
+    return test_labels_[position];
 }
