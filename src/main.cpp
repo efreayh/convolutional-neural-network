@@ -18,7 +18,7 @@ int main() {
 
     std::cout << "Loading data set..." << std::endl ;
 
-    MNISTDataSet dataset("data/mnist2.csv");
+    MNISTDataSet dataset("data/mnist.csv");
     
     std::unique_ptr<Layer> layer0 = std::make_unique<ConvolutionalLayer>(16, 1, 28, 28, 3, 3, learning_rate);
     std::unique_ptr<Layer> layer1 = std::make_unique<ActivationLayer>("relu");
