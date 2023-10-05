@@ -1,7 +1,7 @@
 # Convolutional Neural Network
 In this project, I created a modular convolutional neural network from scratch that is able to achieve 99% accuracy on the [MNIST data set]. The project was designed to be modular, allowing for experimentation with different neural network architectures similar to how neural networks can be created in machine learning libraries such as Keras.
 
-![Convolutional Neural Network](https://developer.nvidia.com/sites/default/files/pictures/2018/convolutional_neural_network.png "Convolutional Neural Network")
+![Convolutional Neural Network](https://d29g4g2dyqv443.cloudfront.net/sites/default/files/pictures/2018/convolutional_neural_network.png "Convolutional Neural Network")
 *<center><sup>Diagram of a Convolutional Neural Network ([Image Source])</sup></center>*
 
 ## Training the Network
